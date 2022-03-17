@@ -1,0 +1,53 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+                {
+            "label": "FS_Build",
+            "command": "sh",
+            "type": "shell",
+            "dependsOn": "build",
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/c",
+                    "\"dotnet build\"",
+                ],
+                "problemMatcher": []
+            }
+        },
+        {
+            "label": "FS_Publish",
+            "command": "sh",
+            "type": "shell",
+            "dependsOn": "build",
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/c",
+                    "\"dotnet publish -r linux-${config:FuS.boardArch} -o bin\\linux-${config:FuS.boardArch}\\publish --no-self-contained\""
+                ],
+                "problemMatcher": []
+            }
+        },
+        {
+            "label": "FS_Deploy",
+            "type": "shell",
+            "dependsOn": "FS_Publish",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "windows": {
+                "command": [ 
+                    "${config:FuS.SSHTool}",
+                    " ${config:FuS.boardUser}@${config:FuS.boardIp} mkdir -p /tmp/${workspaceFolderBasename};",
+                    "${config:FuS.SCPTool} -r", 
+                    ".\\bin\\linux-${config:FuS.boardArch}\\publish\\* ${config:FuS.boardUser}@${config:FuS.boardIp}:/tmp/${workspaceFolderBasename}/" 
+                 ]
+            },
+            "problemMatcher": []
+        }
+    ]
+}

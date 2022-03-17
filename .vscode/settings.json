@@ -1,0 +1,12 @@
+{
+    "FuS.boardIp": "10.0.0.103",
+    "FuS.boardArch": "arm",
+    "FuS.boardUser": "root",
+    "FuS.TargetPath": "/tmp",
+    "FuS.dotnetPath": "/usr/share/dotnet-runtime/dotnet",
+    "FuS.debuggerPath": "/usr/share/dotnet-runtime/vsdbg-linux/vsdbg",
+    "FuS.AppName": "${workspaceFolderBasename}",
+    "FuS.SSHTool": "C:\\Windows\\System32\\OpenSSH\\ssh.exe",
+    "FuS.SCPTool": "C:\\Windows\\System32\\OpenSSH\\scp.exe",
+    "FuS.DotnetVersion" : "net6.0"
+}

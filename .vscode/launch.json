@@ -1,0 +1,39 @@
+{
+
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "FS_Build",
+            "program": "${workspaceFolder}/bin/Debug/${config:FuS.DotnetVersion}/${config:FuS.AppName}.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": ".NET Core Launch (remote console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "FS_Deploy",
+            "program": "${config:FuS.dotnetPath}",
+            "args": ["/${config:FuS.TargetPath}/${workspaceFolderBasename}/${config:FuS.AppName}.dll"],
+            "cwd": "/${config:FuS.TargetPath}/${workspaceFolderBasename}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "${config:FuS.SSHTool}",
+                "pipeArgs": [
+                    "${config:FuS.boardUser}@${config:FuS.boardIp}"
+                ],
+                "debuggerPath": "${config:FuS.debuggerPath}"
+            }
+        },
+    ],
+}
