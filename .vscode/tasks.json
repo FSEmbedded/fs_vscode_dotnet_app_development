@@ -1,53 +1,55 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
+
+    // Run a single task by opening the Command Palette (Ctrl+Shift+P), type "Run Task" and select one of the tasks
     "version": "2.0.0",
     "tasks": [
-                {
-            "label": "FS_Build",
-            "command": "sh",
-            "type": "shell",
-            "dependsOn": "build",
-            "windows": {
-                "command": "cmd",
-                "args": [
-                    "/c",
-                    "\"dotnet build\"",
-                ],
-                "problemMatcher": []
-            }
+        {
+            // Shortcut to fus_build-debug-for-linux (Ctrl+Shift+B)
+            "label": "build",
+            "dependsOn": "fus_build-debug-for-linux",
+            "problemMatcher": []
         },
         {
-            "label": "FS_Publish",
-            "command": "sh",
+            // Will compile for your FuS board
+            "label": "fus_build-debug-for-linux",
             "type": "shell",
-            "dependsOn": "build",
+            "dependsOn": "",
             "windows": {
-                "command": "cmd",
-                "args": [
-                    "/c",
-                    "\"dotnet publish -r linux-${config:FuS.boardArch} -o bin\\linux-${config:FuS.boardArch}\\publish --no-self-contained\""
+                "command": [
+                    "dotnet build ${config:FUS.APP_NAME}.csproj -c Debug -r linux-${config:FUS.BOARD_ARCH} --self-contained false;",
                 ],
-                "problemMatcher": []
-            }
-        },
-        {
-            "label": "FS_Deploy",
-            "type": "shell",
-            "dependsOn": "FS_Publish",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
             },
+            "problemMatcher": "$msCompile",
+        },
+        {
+            // Compiles a new build, then pushes the binary to your FuS board
+            "label": "fus_deploy-to-board",
+            "type": "shell",
+            "dependsOn": "fus_build-debug-for-linux",
             "windows": {
                 "command": [ 
-                    "${config:FuS.SSHTool}",
-                    " ${config:FuS.boardUser}@${config:FuS.boardIp} mkdir -p /tmp/${workspaceFolderBasename};",
-                    "${config:FuS.SCPTool} -r", 
-                    ".\\bin\\linux-${config:FuS.boardArch}\\publish\\* ${config:FuS.boardUser}@${config:FuS.boardIp}:/tmp/${workspaceFolderBasename}/" 
-                 ]
+                "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
+                "'/usr/bin/killall -q dotnet;",
+                "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
+                "${config:FUS.SCP_TOOL}",
+                "${workspaceFolder}\\bin\\Debug\\${config:FUS.DOTNET_VERSION}\\linux-${config:FUS.BOARD_ARCH}\\*",
+                "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};",
+                ],
             },
+            "problemMatcher": [],
+        },
+        {
+            // Deploys a new build to your FuS board, then runs the app
+            "label": "fus_launch-on-board",
+            "type": "shell",
+            "dependsOn": "fus_deploy-to-board",
+            "command": [
+                "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}",
+                "'${config:FUS.DOTNET_PATH} ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME}.dll;'"
+            ],
             "problemMatcher": []
-        }
+        },
     ]
 }

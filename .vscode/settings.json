@@ -1,12 +1,21 @@
 {
-    "FuS.boardIp": "10.0.0.103",
-    "FuS.boardArch": "arm",
-    "FuS.boardUser": "root",
-    "FuS.TargetPath": "/tmp",
-    "FuS.dotnetPath": "/usr/share/dotnet-runtime/dotnet",
-    "FuS.debuggerPath": "/usr/share/dotnet-runtime/vsdbg-linux/vsdbg",
-    "FuS.AppName": "${workspaceFolderBasename}",
-    "FuS.SSHTool": "C:\\Windows\\System32\\OpenSSH\\ssh.exe",
-    "FuS.SCPTool": "C:\\Windows\\System32\\OpenSSH\\scp.exe",
-    "FuS.DotnetVersion" : "net6.0"
+    "FUS": {
+        // Target FuS Board
+        "BOARD_IP":"10.0.0.167",
+        "BOARD_ARCH":"arm64",
+        "BOARD_USER":"root",
+        "BOARD_PATH":"/tmp",
+        "DOTNET_PATH":"/usr/bin/dotnet",
+        "DEBUGGER_PATH":".vs-debugger/vs2022/vsdbg",
+
+        // Project Settings
+        "APP_NAME":"hello_debug",
+
+        // .NET Settings
+        "DOTNET_VERSION":"net8.0",
+
+        // Windows Host Settings
+        "SSH_TOOL":"C:\\Windows\\System32\\OpenSSH\\ssh.exe",
+        "SCP_TOOL":"C:\\Windows\\System32\\OpenSSH\\scp.exe",
+    }
 }

@@ -1,39 +1,28 @@
 {
-
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Debug on FuS Board",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "FS_Build",
-            "program": "${workspaceFolder}/bin/Debug/${config:FuS.DotnetVersion}/${config:FuS.AppName}.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": ".NET Core Launch (remote console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "FS_Deploy",
-            "program": "${config:FuS.dotnetPath}",
-            "args": ["/${config:FuS.TargetPath}/${workspaceFolderBasename}/${config:FuS.AppName}.dll"],
-            "cwd": "/${config:FuS.TargetPath}/${workspaceFolderBasename}",
-            "stopAtEntry": false,
-            "console": "integratedTerminal",
+            "program": "${config:FUS.DOTNET_PATH}",
+            "args": ["${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME}.dll"],
+            "cwd": "${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}",
+            "env": {},
+            "preLaunchTask": "fus_deploy-to-board",
+            "externalConsole": false,
             "pipeTransport": {
-                "pipeCwd": "${workspaceFolder}",
-                "pipeProgram": "${config:FuS.SSHTool}",
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "${config:FUS.SSH_TOOL}",
                 "pipeArgs": [
-                    "${config:FuS.boardUser}@${config:FuS.boardIp}"
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}"
                 ],
-                "debuggerPath": "${config:FuS.debuggerPath}"
-            }
+                "debuggerPath": "${config:FUS.DEBUGGER_PATH}"
+            },
+            "stopAtEntry": true,
         },
     ],
 }
