@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug on FuS Board",
+            "name": "Debug on FuS Board (.NET)",
             "type": "coreclr",
             "request": "launch",
             "program": "${config:FUS.DOTNET_PATH}",
@@ -18,7 +18,31 @@
                 "pipeCwd": "${workspaceRoot}",
                 "pipeProgram": "${config:FUS.SSH_TOOL}",
                 "pipeArgs": [
-                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}"
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}",
+                    "DISPLAY=${config:FUS.DISPLAY}",
+                    "XDG_RUNTIME_DIR=${config:FUS.XDG_RUNTIME_DIR}"
+                ],
+                "debuggerPath": "${config:FUS.DEBUGGER_PATH}"
+            },
+            "stopAtEntry": true,
+        },
+        {
+            "name": "Debug on FuS Board (self-contained)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME}",
+            "args": [],
+            "cwd": "${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}",
+            "env": {},
+            "preLaunchTask": "fus_prepare-self-contained-for-debug",
+            "externalConsole": false,
+            "pipeTransport": {
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "${config:FUS.SSH_TOOL}",
+                "pipeArgs": [
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}",
+                    "DISPLAY=${config:FUS.DISPLAY}",
+                    "XDG_RUNTIME_DIR=${config:FUS.XDG_RUNTIME_DIR}"
                 ],
                 "debuggerPath": "${config:FUS.DEBUGGER_PATH}"
             },

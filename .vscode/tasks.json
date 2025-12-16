@@ -12,16 +12,12 @@
             "problemMatcher": []
         },
         {
-            // Will compile for your FuS board
+            // Will compile a framework dependent application for your FuS board
             "label": "fus_build-debug-for-linux",
             "type": "shell",
             "dependsOn": "",
-            "windows": {
-                "command": [
-                    "dotnet build ${config:FUS.APP_NAME}.csproj -c Debug -r linux-${config:FUS.BOARD_ARCH} --self-contained false;",
-                ],
-            },
-            "problemMatcher": "$msCompile",
+            "command": "dotnet build ${config:FUS.APP_NAME}.csproj -c Debug -r linux-${config:FUS.BOARD_ARCH} --self-contained false",
+            "problemMatcher": "$msCompile"
         },
         {
             // Compiles a new build, then pushes the binary to your FuS board
@@ -29,14 +25,24 @@
             "type": "shell",
             "dependsOn": "fus_build-debug-for-linux",
             "windows": {
-                "command": [ 
-                "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
-                "'/usr/bin/killall -q dotnet;",
-                "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
-                "${config:FUS.SCP_TOOL} -r",
-                "'${workspaceFolder}\\bin\\Debug\\${config:FUS.DOTNET_VERSION}\\linux-${config:FUS.BOARD_ARCH}\\*'",
-                "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};",
-                ],
+                "command": [
+                    "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
+                    "'/usr/bin/killall -q dotnet;",
+                    "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
+                    "${config:FUS.SCP_TOOL} -r",
+                    "'${workspaceFolder}\\bin\\Debug\\${config:FUS.DOTNET_VERSION}\\linux-${config:FUS.BOARD_ARCH}\\*'",
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};"
+                ]
+            },
+            "linux": {
+                "command": [
+                    "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
+                    "'/usr/bin/killall -q dotnet;",
+                    "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
+                    "${config:FUS.SCP_TOOL} -r",
+                    "${workspaceFolder}/bin/Debug/${config:FUS.DOTNET_VERSION}/linux-${config:FUS.BOARD_ARCH}/*",
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};"
+                ]
             },
             "problemMatcher": [],
         },
@@ -51,5 +57,63 @@
             ],
             "problemMatcher": []
         },
+        {
+            // Will compile a self-contained application for your FuS board
+            "label": "fus_build-self-contained-for-linux",
+            "type": "shell",
+            "dependsOn": "",
+            "command": "dotnet build ${config:FUS.APP_NAME}.csproj -c Debug -r linux-${config:FUS.BOARD_ARCH} --self-contained true",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            // Compiles a new build, then pushes the binary to your FuS board
+            "label": "fus_deploy-self-contained-to-board",
+            "type": "shell",
+            "dependsOn": "fus_build-self-contained-for-linux",
+            "windows": {
+                "command": [
+                    "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
+                    "'/usr/bin/killall -q ${config:FUS.APP_NAME};",
+                    "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
+                    "${config:FUS.SCP_TOOL} -r",
+                    "'${workspaceFolder}\\bin\\Debug\\${config:FUS.DOTNET_VERSION}\\linux-${config:FUS.BOARD_ARCH}\\*'",
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};"
+                ]
+            },
+            "linux": {
+                "command": [
+                    "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP} sh -c",
+                    "'/usr/bin/killall -q ${config:FUS.APP_NAME};",
+                    "mkdir -p ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}';",
+                    "${config:FUS.SCP_TOOL} -r",
+                    "${workspaceFolder}/bin/Debug/${config:FUS.DOTNET_VERSION}/linux-${config:FUS.BOARD_ARCH}/*",
+                    "${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}:${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME};"
+                ]
+            },
+            "problemMatcher": [],
+        },
+        {
+            // Prepares self-contained binary for debugging (deploy + chmod, but don't run)
+            "label": "fus_prepare-self-contained-for-debug",
+            "type": "shell",
+            "dependsOn": "fus_deploy-self-contained-to-board",
+            "command": [
+                "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}",
+                "'chmod +x ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME}'"
+            ],
+            "problemMatcher": []
+        },
+        {
+            // Deploys a new build to your FuS board, then runs the app
+            "label": "fus_launch-self-contained-on-board",
+            "type": "shell",
+            "dependsOn": "fus_deploy-self-contained-to-board",
+            "command": [
+                "${config:FUS.SSH_TOOL} -t ${config:FUS.BOARD_USER}@${config:FUS.BOARD_IP}",
+                "'chmod +x ${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME};",
+                "${config:FUS.BOARD_PATH}/${config:FUS.APP_NAME}/${config:FUS.APP_NAME}'"
+            ],
+            "problemMatcher": []
+        }
     ]
 }

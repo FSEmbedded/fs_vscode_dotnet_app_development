@@ -1,12 +1,14 @@
 {
     "FUS": {
         // Target FuS Board
-        "BOARD_IP":"10.0.0.167",
+        "BOARD_IP":"10.0.0.56",
         "BOARD_ARCH":"arm64",
         "BOARD_USER":"root",
         "BOARD_PATH":"/tmp",
         "DOTNET_PATH":"/usr/bin/dotnet",
-        "DEBUGGER_PATH":".vs-debugger/vs2022/vsdbg",
+        "DEBUGGER_PATH":"~/.vs-debugger/vs2022/vsdbg",
+        "DISPLAY": ":0",
+        "XDG_RUNTIME_DIR": "/run/user/0",
 
         // Project Settings
         "APP_NAME":"hello_debug",
@@ -14,8 +16,8 @@
         // .NET Settings
         "DOTNET_VERSION":"net8.0",
 
-        // Windows Host Settings
-        "SSH_TOOL":"C:\\Windows\\System32\\OpenSSH\\ssh.exe",
-        "SCP_TOOL":"C:\\Windows\\System32\\OpenSSH\\scp.exe",
+        // Host Settings
+        "SSH_TOOL":"ssh",
+        "SCP_TOOL":"scp"
     }
 }
